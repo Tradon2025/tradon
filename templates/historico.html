@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Histórico de Apostas</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        th {
+            background: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Histórico de Apostas</h1>
+
+    <a href="{{ url_for('dashboard') }}">Voltar ao Dashboard</a>
+
+    {% if apostas %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Data</th>
+                <th>Método</th>
+                <th>Casa</th>
+                <th>Visitante</th>
+                <th>Stake</th>
+                <th>Odd</th>
+                <th>Minuto do Gol</th>
+                <th>Valor Realizado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aposta in apostas %}
+            <tr>
+                <td>{{ aposta[0] }}</td>
+                <td>{{ aposta[1] }}</td>
+                <td>{{ aposta[2] }}</td>
+                <td>{{ aposta[3] }}</td>
+                <td>{{ aposta[4] }}</td>
+                <td>{{ aposta[5] }}</td>
+                <td>{{ aposta[6] }}</td>
+                <td>{{ aposta[7] }}</td>
+                <td>{{ aposta[8] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Nenhuma aposta cadastrada.</p>
+    {% endif %}
+</body>
+</html>

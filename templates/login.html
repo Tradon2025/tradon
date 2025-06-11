@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      margin: 20px;    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      background-color: #1f1f1f;
+      color: #e0e0e0;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #2196f3;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0b7dda;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+    }
+    a {
+      color: #2196f3;
+      text-decoration: none;
+      margin-top: 15px;
+      display: inline-block;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Login</h1>
+
+    <form method="POST" action="/login">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" name="senha" required />
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <a href="{{ url_for('register') }}">Criar conta</a>
+  </div>
+</body>
+</html>

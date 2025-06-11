@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Estatísticas Mensais{% endblock %}
+
+{% block content %}
+  <meta charset="UTF-8" />
+  <title>Estatísticas Mensais Detalhadas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #1470c2;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      max-width: 900px;
+      margin: auto;
+      overflow-x: auto;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 800px;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #333;
+      text-align: center;
+    }
+    th {
+      background-color: #222;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    tr:hover {
+      background-color: #333;
+    }
+    td.positivo {
+      color: #0f0;
+    }
+    td.negativo {
+      color: #f00;
+    }
+    td.neutro {
+      color: #ccc;
+    }
+
+    .btn-voltar {
+      background-color: #195591;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .btn-voltar:hover {
+      background-color: #1a60a5;
+    }
+  </style>
+
+  <h1>📅 Estatísticas Mensais (Detalhadas)</h1>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Mês</th>
+          <th>Realizado (R$)</th>
+          <th>% de Lucro</th>
+          <th>Entradas</th>
+          <th>Greens</th>
+          <th>Reds</th>
+          <th>Odd Média</th>
+          <th>Stake Média</th>
+          <th>Banca Acumulada (R$)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in resultados %}
+        <tr>
+          <td>{{ row.data }}</td>
+
+          {% if row.lucro_mes > 0 %}
+            <td class="positivo">R$ {{ "{:,.2f}".format(row.lucro_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+          {% elif row.lucro_mes < 0 %}
+            <td class="negativo">R$ {{ "{:,.2f}".format(row.lucro_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+          {% else %}
+            <td class="neutro">R$ {{ "{:,.2f}".format(row.lucro_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+          {% endif %}
+
+          <td>{{ "{:,.2f}".format(row.pct_lucro).replace(".", ",") }}%</td>
+          <td>{{ row.qtd_entradas }}</td>
+          <td>{{ row.greens }}</td>
+          <td>{{ row.reds }}</td>
+          <td>{{ "{:,.2f}".format(row.odd_media).replace(".", ",") }}</td>
+          <td>{{ "{:,.2f}".format(row.stake_media).replace(".", ",") }}</td>
+
+          {% if row.banca_acumulada > 0 %}
+            <td class="positivo">R$ {{ "{:,.2f}".format(row.banca_acumulada).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+          {% elif row.banca_acumulada < 0 %}
+            <td class="negativo">R$ {{ "{:,.2f}".format(row.banca_acumulada).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+          {% else %}
+            <td class="neutro">R$ {{ "{:,.2f}".format(row.banca_acumulada).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
+          {% endif %}
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="9">Nenhum dado encontrado para o período.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+  <tr>
+    <th colspan="3">Totais Gerais:</th>
+    <th>{{ total_entradas }}</th>
+    <th>{{ total_greens }}</th>
+    <th>{{ total_reds }}</th>
+    <th>{{ "{:,.2f}".format(odd_media_total).replace(".", ",") }}</th>
+    <th>{{ "{:,.2f}".format(stake_media_total).replace(".", ",") }}</th>
+    {% if banca_final > 0 %}
+      <th class="positivo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
+    {% elif banca_final < 0 %}
+      <th class="negativo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
+    {% else %}
+      <th class="neutro">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
+    {% endif %}
+  </tr>
+  <tr>
+    <th colspan="2">Lucro Total:</th>
+    <td colspan="2" class="{{ 'positivo' if lucro_total > 0 else 'negativo' if lucro_total < 0 else 'neutro' }}">
+      R$ {{ "{:,.2f}".format(lucro_total).replace(",", "X").replace(".", ",").replace("X", ".") }}
+    </td>
+    <td colspan="2">% de Lucro Total:</td>
+    <td colspan="3">{{ "{:,.2f}".format(pct_lucro_total).replace(".", ",") }}%</td>
+  </tr>
+</tfoot>
+
+
+    </table>
+  </div>
+
+
+{% endblock %}

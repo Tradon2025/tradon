@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% block title %}Gráficos{% endblock %}
+
+{% block content %}
+<!-- Chart.js + DataLabels plugin -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<style>
+  body {
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 30px;
+  }
+
+  h1, h2 {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 10px;
+  }
+
+  form.filtro-graficos {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+  }
+
+  form.filtro-graficos > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  form.filtro-graficos label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #ccc;
+    text-align: center;
+  }
+
+  form.filtro-graficos input[type="date"] {
+    padding: 5px 8px;
+    border-radius: 5px;
+    border: none;
+    font-size: 0.9rem;
+    background-color: #222;
+    color: #eee;
+    width: 120px;
+    text-align: center;
+  }
+
+  form.filtro-graficos button {
+    padding: 6px 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #0d6efd;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  form.filtro-graficos button:hover {
+    background-color: #0b5ed7;
+  }
+
+  /* Container flex para gráficos lado a lado */
+  .container-graficos {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  /* Cada gráfico com tamanho menor */
+  .grafico-box {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    padding: 20px;
+    width: 450px;
+  }
+
+  canvas {
+    /* O canvas vai ocupar toda a largura do container */
+    width: 100% !important;
+    height: 250px !important;
+  }
+</style>
+
+<form class="filtro-graficos" method="get" action="">
+  <div>
+    <label for="data_inicio">De:</label>
+    <input type="date" id="data_inicio" name="data_inicio" value="{{ data_inicio or '' }}">
+  </div>
+  <div>
+    <label for="data_fim">Até:</label>
+    <input type="date" id="data_fim" name="data_fim" value="{{ data_fim or '' }}">
+  </div>
+  <div>
+    <button type="submit">Filtrar</button>
+  </div>
+
+
+  
+</form>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <a href="{{ url_for('estatisticas_por_metodo') }}" class="btn-metodo">
+    Ver Estatísticas por Método
+  </a>
+</div>
+
+<h1>📊 Gráficos de Desempenho por Método</h1>
+
+<div class="container-graficos">
+  <div class="grafico-box">
+    <h2>Lucro por Método</h2>
+    <canvas id="graficoLucros"></canvas>
+  </div>
+  <div class="grafico-box">
+    <h2>Green vs Red por Método</h2>
+    <canvas id="graficoGreensReds"></canvas>
+  </div>
+</div>
+
+<script>
+  const metodos = {{ metodos|tojson }};
+  const lucros = {{ lucros_por_metodo|tojson }};
+  const greens = {{ greens_por_metodo|tojson }};
+  const reds = {{ reds_por_metodo|tojson }};
+
+  const ctxLucro = document.getElementById('graficoLucros').getContext('2d');
+  new Chart(ctxLucro, {
+    type: 'bar',
+    data: {
+      labels: metodos,
+      datasets: [{
+        label: 'Lucro (R$)',
+        data: lucros,
+        backgroundColor: 'rgba(0, 200, 255, 0.7)',
+        borderRadius: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        datalabels: {
+          color: '#fff',
+          anchor: 'center',
+          align: 'center',
+          font: {
+            weight: 'bold',
+            size: 13
+          },
+          formatter: val => `R$ ${val.toFixed(2)}`
+        },
+        legend: { display: false },
+        title: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#aaa' }
+        },
+        x: {
+          ticks: { color: '#aaa' }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+
+  const ctxGR = document.getElementById('graficoGreensReds').getContext('2d');
+  new Chart(ctxGR, {
+    type: 'bar',
+    data: {
+      labels: metodos,
+      datasets: [
+        {
+          label: 'Greens',
+          data: greens,
+          backgroundColor: 'rgba(0, 200, 83, 0.8)',
+          borderRadius: 6,
+        },
+        {
+          label: 'Reds',
+          data: reds,
+          backgroundColor: 'rgba(244, 67, 54, 0.8)',
+          borderRadius: 6,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        datalabels: {
+          color: '#fff',
+          anchor: 'center',
+          align: 'center',
+          font: { weight: 'bold', size: 12 }
+        },
+        legend: { labels: { color: '#fff' } },
+        title: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#aaa' } },
+        x: { ticks: { color: '#aaa' } }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+</script>
+
+{% endblock %}

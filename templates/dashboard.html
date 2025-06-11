@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <style>
+    body {
+      background-color: #121212;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 20px;
+    }
+
+    h1, h2 {
+      color: #eee;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;         /* permite que os cards quebrem linha */
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+  background-color: #2c2c3e;
+  border-radius: 12px;
+  padding: 20px 30px;
+  width: 180px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    .card p {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+      max-width: 500px;
+    }
+  </style>
+
+  <h1>📊 Dashboard de Entradas</h1>
+
+  <div class="stats">
+    <div class="card">
+      <h3>{{ total_entradas }}</h3>
+      <p>Total de Entradas</p>
+    </div>
+    <div class="card">
+      <h3>{{ total_greens }}</h3>
+      <p>Total de Greens</p>
+    </div>
+    <div class="card">
+      <h3>{{ total_reds }}</h3>
+      <p>Total de Reds</p>
+    </div>
+    <div class="card">
+      <h3>{{ winrate | round(2) }}%</h3>
+      <p>Win Rate</p>
+    </div>
+    <div class="card">
+      <h3>{{ lucro | br_moeda }}</h3>
+      <p>Lucro</p>
+    </div>
+    <div class="card">
+      <h3>{{ roi | round(2) }}%</h3>
+      <p>ROI</p>
+    </div>
+    <div class="card">
+      <h3>{{ rendimento_pct | round(2) }}%</h3>
+      <p>% de Lucro sobre a Banca</p>
+    </div>
+    <div class="card">
+      <h3>{{ banca_atual | br_moeda }}</h3>
+      <p>Banca Atual</p>
+    </div>
+  </div>
+
+  <h2>Lucro por Método</h2>
+  <canvas id="lucroMetodoChart"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('lucroMetodoChart').getContext('2d');
+
+    const data = {
+      labels: {{ metodos | tojson }},
+      datasets: [{
+        data: {{ lucros_metodo | tojson }},
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(153, 102, 255, 0.7)',
+          'rgba(255, 159, 64, 0.7)'
+        ],
+        borderColor: '#222',
+        borderWidth: 1
+      }]
+    };
+
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#eee', font: { size: 14 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let label = context.label || '';
+              let value = context.parsed || 0;
+              return label + ': R$ ' + value.toFixed(2).replace('.', ',');
+            }
+          }
+        }
+      }
+    };
+
+    new Chart(ctx, {
+      type: 'pie',
+      data: data,
+      options: options
+    });
+  </script>
+{% endblock %}

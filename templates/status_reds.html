@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-white">Reds Seguidos por Método</h2>
+    <table class="table table-dark table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Método</th>
+                <th>Reds Seguidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for metodo, count in reds.items() %}
+                <tr>
+                    <td>{{ metodo }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2">Nenhum red consecutivo encontrado.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

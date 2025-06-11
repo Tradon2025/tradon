@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Jogos Ao Vivo{% endblock %}
+
+{% block content %}
+<h2 style="text-align:center; color:#ccc; margin-top:20px;">Jogos Ao Vivo</h2>
+
+{% if jogos|length == 0 %}
+  <p style="color:#ccc; text-align:center;">Nenhum jogo ao vivo no momento.</p>
+{% else %}
+  <table style="width:90%; margin:auto; border-collapse:collapse; color:#ccc;">
+    <thead>
+      <tr style="border-bottom: 2px solid #078330;">
+        <th>Liga</th>
+        <th>Casa</th>
+        <th>Visitante</th>
+        <th>Placar</th>
+        <th>Tempo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for jogo in jogos %}
+      <tr style="border-bottom: 1px solid #444;">
+        <td>{{ jogo.liga }}</td>
+        <td>{{ jogo.time_casa }}</td>
+        <td>{{ jogo.time_visitante }}</td>
+        <td>{{ jogo.placar_casa }} x {{ jogo.placar_visitante }}</td>
+        <td>{{ jogo.tempo_jogo }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

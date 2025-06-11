@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Estatísticas por Método{% endblock %}
+
+{% block content %}
+<style>
+  body { background-color: #121212; color: #eee; font-family: 'Segoe UI'; margin: 20px; }
+  h1 { text-align: center; margin-bottom: 20px; color: white; }
+  .filtro-form { text-align: center; margin-bottom: 20px; }
+  input[type="date"] { background: #1e1e1e; color: #eee; padding: 5px 10px; border: 1px solid #444; border-radius: 4px; }
+  button { background-color: #195591; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-left: 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 20px; }
+  th, td { padding: 10px; border-bottom: 1px solid #333; text-align: center; }
+  th { background-color: #222; }
+  tr:hover { background-color: #333; }
+  td.positivo { color: #0f0; }
+  td.negativo { color: #f00; }
+</style>
+
+<h1>📊 Estatísticas por Método</h1>
+
+<div class="filtro-form">
+  <form method="get">
+    <label>De: <input type="date" name="data_inicio" value="{{ data_inicio }}"></label>
+    <label>Até: <input type="date" name="data_fim" value="{{ data_fim }}"></label>
+    <button type="submit">Filtrar</button>
+  </form>
+</div>
+
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Método</th>
+        <th>Entradas</th>
+        <th>Greens</th>
+        <th>Reds</th>
+        <th>Stake Média</th>
+        <th>Odd Média</th>
+        <th>Lucro</th>
+        <th>Winrate (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in resultados %}
+      <tr>
+        <td>{{ row.metodo }}</td>
+        <td>{{ row.entradas }}</td>
+        <td>{{ row.greens }}</td>
+        <td>{{ row.reds }}</td>
+        <td>{{ "{:,.2f}".format(row.stake_media).replace(".", ",") }}</td>
+        <td>{{ "{:,.2f}".format(row.odd_media).replace(".", ",") }}</td>
+        <td class="{{ 'positivo' if row.lucro > 0 else 'negativo' if row.lucro < 0 else '' }}">
+          R$ {{ "{:,.2f}".format(row.lucro).replace(".", ",") }}
+        </td>
+        <td>{{ "{:.2f}".format(row.winrate).replace(".", ",") }}%</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="8">Nenhum dado encontrado.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

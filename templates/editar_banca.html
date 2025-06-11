@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Banca Inicial</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+        }
+        form {
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            background-color: #00b894;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #019875;
+        }
+        .mensagem {
+            margin-top: 20px;
+            color: #00cec9;
+        }
+    </style>
+</head>
+<body>
+    <h2>Editar Banca Inicial</h2>
+    <form method="POST">
+        <label for="banca_inicial">Nova banca inicial:</label>
+        <input type="number" name="banca_inicial" step="0.01" required value="{{ banca_atual }}">
+        <button type="submit">Salvar</button>
+    </form>
+    {% if mensagem %}
+        <div class="mensagem">{{ mensagem }}</div>
+    {% endif %}
+</body>
+</html>

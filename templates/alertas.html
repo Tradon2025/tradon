@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Alertas de Gol</h2>
+
+{% if alertas %}
+  <ul>
+    {% for alerta in alertas %}
+      <li>
+        <strong>{{ alerta.jogo }}</strong> - Minuto: {{ alerta.minuto }} - 
+        Chutes ao gol: {{ alerta.chutes }} - Ataques perigosos: {{ alerta.ataques }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Não há alertas de gol no momento.</p>
+{% endif %}
+
+{% endblock %}
