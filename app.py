@@ -1162,6 +1162,33 @@ def obter_banca_inicial(usuario_id):
     return result['banca_inicial'] if result else 0
 
 
+
+MESES_PT = {
+    '01': 'Janeiro',
+    '02': 'Fevereiro',
+    '03': 'Março',
+    '04': 'Abril',
+    '05': 'Maio',
+    '06': 'Junho',
+    '07': 'Julho',
+    '08': 'Agosto',
+    '09': 'Setembro',
+    '10': 'Outubro',
+    '11': 'Novembro',
+    '12': 'Dezembro'
+}
+
+@app.template_filter('mes_ano_format')
+def mes_ano_format(value):
+    # Espera string no formato 'YYYY-MM'
+    if not value or len(value) != 7:
+        return value
+    ano = value[:4]
+    mes = value[5:7]
+    nome_mes = MESES_PT.get(mes, mes)
+    return f"{nome_mes}/{ano}"
+
+
 @app.route('/estatisticas_mensais')
 def estatisticas_mensais():
     if 'usuario_id' not in session:
@@ -1185,6 +1212,8 @@ def estatisticas_mensais():
         ORDER BY mes DESC
     ''', (session['usuario_id'],))
 
+    rows = cursor.fetchall()
+
     def obter_banca_inicial(usuario_id):
         cur = get_db_connection().cursor()
         cur.execute('SELECT banca_inicial FROM usuarios WHERE id = ?', (usuario_id,))
@@ -1197,49 +1226,45 @@ def estatisticas_mensais():
     total_greens = 0
     total_reds = 0
 
-    meses_pt = {
-        "01": "Janeiro", "02": "Fevereiro", "03": "Março", "04": "Abril",
-        "05": "Maio", "06": "Junho", "07": "Julho", "08": "Agosto",
-        "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro"
-    }
+    
 
-    for row in cursor.fetchall():
-        mes_ano = row['mes']
-        ano, mes = mes_ano.split('-')
-        nome_mes = meses_pt.get(mes, mes)
-        data_formatada = f"{nome_mes}/{ano}"
+    for row in rows:
+        data = row[0]
+        qtd_entradas = row[1] or 0
+        greens = row[2] or 0
+        reds = row[3] or 0
+        odd_media = round(row[4] or 0, 2)
+        stake_media = round(row[5] or 0, 2)
+        lucro_mes = row[6] or 0
 
-        lucro_mes = row['lucro_mes'] or 0
+        winrate_mes = (greens / qtd_entradas * 100) if qtd_entradas else 0
+        pct_lucro = (lucro_mes / banca_inicial * 100) if banca_inicial else 0
+
         banca_acumulada += lucro_mes
-        pct_lucro = (lucro_mes / banca_inicial * 100) if banca_inicial != 0 else 0
-
-        greens = row['greens'] or 0
-        reds = row['reds'] or 0
         total_greens += greens
         total_reds += reds
-        
 
-        winrate = (greens / row['qtd_entradas'] * 100) if row['qtd_entradas'] else 0
+        resultados.append({
+            'data': data,
+            'lucro_mes': lucro_mes,
+            'pct_lucro': pct_lucro,
+            'qtd_entradas': qtd_entradas,
+            'greens': greens,
+            'reds': reds,
+            'odd_media': odd_media,
+            'stake_media': stake_media,
+            'winrate': winrate_mes,
+            'banca_acumulada': banca_acumulada
+        })
 
-    resultados.append({
-        'data': data_formatada,
-        'qtd_entradas': row['qtd_entradas'],
-        'greens': greens,
-        'reds': reds,
-        'winrate': winrate,
-        'odd_media': row['odd_media'] or 0,
-        'stake_media': row['stake_media'] or 0,
-        'lucro_mes': lucro_mes,
-        'pct_lucro': pct_lucro,
-        'banca_acumulada': banca_acumulada
-    })
-
-    # Totais finais para exibir no template (se necessário)
     total_entradas = sum(r['qtd_entradas'] for r in resultados)
     lucro_total = sum(r['lucro_mes'] for r in resultados)
     pct_lucro_total = (lucro_total / banca_inicial * 100) if banca_inicial != 0 else 0
     odd_media_total = (sum(r['odd_media'] * r['qtd_entradas'] for r in resultados) / total_entradas) if total_entradas else 0
     stake_media_total = (sum(r['stake_media'] * r['qtd_entradas'] for r in resultados) / total_entradas) if total_entradas else 0
+    winrate_total = (total_greens / total_entradas * 100) if total_entradas else 0
+
+    
 
     conn.close()
 
@@ -1253,7 +1278,8 @@ def estatisticas_mensais():
         stake_media_total=stake_media_total,
         total_greens=total_greens,
         total_reds=total_reds,
-        banca_final=banca_acumulada
+        banca_final=banca_acumulada,
+        winrate_total=winrate_total
     )
 
 
