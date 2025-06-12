@@ -1217,18 +1217,22 @@ def estatisticas_mensais():
         reds = row['reds'] or 0
         total_greens += greens
         total_reds += reds
+        
 
-        resultados.append({
-            'data': data_formatada,
-            'qtd_entradas': row['qtd_entradas'],
-            'greens': greens,
-            'reds': reds,
-            'odd_media': row['odd_media'] or 0,
-            'stake_media': row['stake_media'] or 0,
-            'lucro_mes': lucro_mes,
-            'pct_lucro': pct_lucro,
-            'banca_acumulada': banca_acumulada
-        })
+        winrate = (greens / row['qtd_entradas'] * 100) if row['qtd_entradas'] else 0
+
+    resultados.append({
+        'data': data_formatada,
+        'qtd_entradas': row['qtd_entradas'],
+        'greens': greens,
+        'reds': reds,
+        'winrate': winrate,
+        'odd_media': row['odd_media'] or 0,
+        'stake_media': row['stake_media'] or 0,
+        'lucro_mes': lucro_mes,
+        'pct_lucro': pct_lucro,
+        'banca_acumulada': banca_acumulada
+    })
 
     # Totais finais para exibir no template (se necessário)
     total_entradas = sum(r['qtd_entradas'] for r in resultados)
