@@ -98,7 +98,7 @@
       <tbody>
         {% for row in resultados %}
         <tr>
-          <td>{{ row.data }}</td>
+          <td>{{ row.data | mes_ano_format }}</td>
 
           {% if row.lucro_mes > 0 %}
             <td class="positivo">R$ {{ "{:,.2f}".format(row.lucro_mes).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
@@ -112,9 +112,9 @@
           <td>{{ row.qtd_entradas }}</td>
           <td>{{ row.greens }}</td>
           <td>{{ row.reds }}</td>
-          <td>{{ "{:.2f}".format(row.winrate).replace(".", ",") }}%</td>
           <td>{{ "{:,.2f}".format(row.odd_media).replace(".", ",") }}</td>
           <td>{{ "{:,.2f}".format(row.stake_media).replace(".", ",") }}</td>
+          <td>{{ "{:.2f}".format(row.winrate).replace(".", ",") }}%</td>
 
           {% if row.banca_acumulada > 0 %}
             <td class="positivo">R$ {{ "{:,.2f}".format(row.banca_acumulada).replace(",", "X").replace(".", ",").replace("X", ".") }}</td>
@@ -126,40 +126,37 @@
         </tr>
         {% else %}
         <tr>
-          <td colspan="9">Nenhum dado encontrado para o período.</td>
+          <td colspan="10">Nenhum dado encontrado para o período.</td>
         </tr>
         {% endfor %}
       </tbody>
+
       <tfoot>
-  <tr>
-    <th colspan="3">Totais Gerais:</th>
-    <th>{{ total_entradas }}</th>
-    <th>{{ total_greens }}</th>
-    <th>{{ total_reds }}</th>
-    <th>{{ "{:,.2f}".format(odd_media_total).replace(".", ",") }}</th>
-    <th>{{ "{:,.2f}".format(stake_media_total).replace(".", ",") }}</th>
-    <th>{{ "{:.2f}".format(winrate_total).replace(".", ",") }}%</th>
-    {% if banca_final > 0 %}
-      <th class="positivo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
-    {% elif banca_final < 0 %}
-      <th class="negativo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
-    {% else %}
-      <th class="neutro">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
-    {% endif %}
-  </tr>
-  <tr>
-    <th colspan="2">Lucro Total:</th>
-    <td colspan="2" class="{{ 'positivo' if lucro_total > 0 else 'negativo' if lucro_total < 0 else 'neutro' }}">
-      R$ {{ "{:,.2f}".format(lucro_total).replace(",", "X").replace(".", ",").replace("X", ".") }}
-    </td>
-    <td colspan="2">% de Lucro Total:</td>
-    <td colspan="3">{{ "{:,.2f}".format(pct_lucro_total).replace(".", ",") }}%</td>
-  </tr>
-</tfoot>
-
-
+        <tr>
+          <th colspan="3">Totais Gerais:</th>
+          <th>{{ total_entradas }}</th>
+          <th>{{ total_greens }}</th>
+          <th>{{ total_reds }}</th>
+          <th>{{ "{:,.2f}".format(odd_media_total).replace(".", ",") }}</th>
+          <th>{{ "{:,.2f}".format(stake_media_total).replace(".", ",") }}</th>
+          <th>{{ "{:.2f}".format(winrate_total).replace(".", ",") }}%</th>
+          {% if banca_final > 0 %}
+            <th class="positivo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
+          {% elif banca_final < 0 %}
+            <th class="negativo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
+          {% else %}
+            <th class="neutro">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
+          {% endif %}
+        </tr>
+        <tr>
+          <th colspan="2">Lucro Total:</th>
+          <td colspan="2" class="{{ 'positivo' if lucro_total > 0 else 'negativo' if lucro_total < 0 else 'neutro' }}">
+            R$ {{ "{:,.2f}".format(lucro_total).replace(",", "X").replace(".", ",").replace("X", ".") }}
+          </td>
+          <td colspan="2">% de Lucro Total:</td>
+          <td colspan="3">{{ "{:,.2f}".format(pct_lucro_total).replace(".", ",") }}%</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
-
-
 {% endblock %}
