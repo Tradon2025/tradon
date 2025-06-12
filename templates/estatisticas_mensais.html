@@ -91,6 +91,7 @@
           <th>Reds</th>
           <th>Odd Média</th>
           <th>Stake Média</th>
+          <th>Win Rate (%)</th>
           <th>Banca Acumulada (R$)</th>
         </tr>
       </thead>
@@ -111,6 +112,7 @@
           <td>{{ row.qtd_entradas }}</td>
           <td>{{ row.greens }}</td>
           <td>{{ row.reds }}</td>
+          <td>{{ "{:.2f}".format(row.winrate).replace(".", ",") }}%</td>
           <td>{{ "{:,.2f}".format(row.odd_media).replace(".", ",") }}</td>
           <td>{{ "{:,.2f}".format(row.stake_media).replace(".", ",") }}</td>
 
@@ -136,6 +138,7 @@
     <th>{{ total_reds }}</th>
     <th>{{ "{:,.2f}".format(odd_media_total).replace(".", ",") }}</th>
     <th>{{ "{:,.2f}".format(stake_media_total).replace(".", ",") }}</th>
+    <th>{{ "{:.2f}".format(winrate_total).replace(".", ",") }}%</th>
     {% if banca_final > 0 %}
       <th class="positivo">R$ {{ "{:,.2f}".format(banca_final).replace(",", "X").replace(".", ",").replace("X", ".") }}</th>
     {% elif banca_final < 0 %}
